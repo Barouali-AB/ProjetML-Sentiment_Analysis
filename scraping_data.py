@@ -27,7 +27,13 @@ def scrap_data(url):
         writer.writerow(row)
 
 
+def number_reviews(url):
+    page = requests.get(url, headers=headers)
+    soup1 = soup(page.content, "html.parser")
+    soup2 = soup(soup1.prettify(), 'html.parser')
 
+    list_data_reviews = soup2.findAll('div', {'class': 'cqoFv _T'})
+    return len(list_data_reviews)
 
 
 
@@ -74,7 +80,7 @@ for hotel in hotels:
 
         while (not last_page(url)):
 
-            cmp += 5
+            cmp += number_reviews(url)
             url = re.sub(r'(Reviews-)', "or" + str(cmp) + "-", url_origin)
             scrap_data(url)
 
