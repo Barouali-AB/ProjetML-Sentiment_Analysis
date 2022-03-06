@@ -28,7 +28,7 @@ def scrap_data(url):
         review = data_review.find('q', {'class': 'XllAv H4 _a'})
         rating = data_review.find('div', {'class': 'emWez F1'})
         rating_value = rating.find('span').attrs['class'][1][7]
-        if ( rating_counter[int(rating_value)-1] < 5 ):
+        if ( rating_counter[int(rating_value)-1] < 1000 ):
             row = [review.find('span').text.strip(), rating_value]
             rating_counter[int(rating_value) - 1] += 1
             writer.writerow(row)
@@ -97,8 +97,8 @@ for hotel in hotels:
                 cmp += number_reviews(url)
                 url = re.sub(r'(Reviews-)', "or" + str(cmp) + "-", url_origin)
                 scrap_data(url)
-                if ( rating_counter[0] == 5 and rating_counter[1] == 5 and rating_counter[2] == 5 and rating_counter[3] == 5 and
-                rating_counter[4] == 5 ):
+                if ( rating_counter[0] == 1000 and rating_counter[1] == 1000 and rating_counter[2] == 1000 and rating_counter[3] == 1000
+                        and rating_counter[4] == 1000 ):
                         full = True
 
     else:
