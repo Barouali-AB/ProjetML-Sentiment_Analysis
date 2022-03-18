@@ -72,8 +72,6 @@ def last_page(url):
         return True
 
 
-
-
 url = "https://www.tripadvisor.com/Hotels-g187147-Paris_Ile_de_France-Hotels.html"
 
 page = requests.get(url, headers=headers)
@@ -96,7 +94,7 @@ for hotel in hotels:
             url = url_origin
             scrap_data(url)
             cmp = 0
-            while (not last_page(url) and not full ):
+            while (not last_page(url) and not full ):       
 
                 cmp += number_reviews(url)
                 url = re.sub(r'(Reviews-)', "or" + str(cmp) + "-", url_origin)
