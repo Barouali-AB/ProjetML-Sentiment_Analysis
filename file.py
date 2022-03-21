@@ -8,6 +8,7 @@ from sklearn.linear_model import PassiveAggressiveClassifier
 from nettoyage import *
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
+from nltk.util import ngrams
 
 
 def nettoyerDataframe(df):
@@ -17,6 +18,7 @@ def nettoyerDataframe(df):
     df["Review"] = df.Review.map(lambda x: remove_punct(x)) 
     df["Review"] = df.Review.map(remove_stopwords)   
     return df
+
 
 
 def tfidf(df,ngrams):
