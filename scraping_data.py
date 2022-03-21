@@ -6,15 +6,15 @@ import re
 
 header = ["Review", "Rating"]
 
-data = open(r'hotel_reviews.csv', 'w', encoding="utf-8", newline="")
+data = open(r'all_reviews.csv', 'w', encoding="utf-8", newline="")
 
 
 writer = csv.writer(data)
 writer.writerow(header)
 
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36'}
-rating_counter = [0,0,0,0,0]
-full = False
+
+
 
 def scrap_data(url):
     page = requests.get(url, headers=headers)
@@ -24,19 +24,16 @@ def scrap_data(url):
     list_data_reviews = soup2.findAll('div', {'class': 'cqoFv _T'})
 
     for data_review in list_data_reviews:
-        
+
         review = data_review.find('q', {'class': 'XllAv H4 _a'})
         rating = data_review.find('div', {'class': 'emWez F1'})
         rating_value = rating.find('span').attrs['class'][1][7]
-        if ( rating_counter[int(rating_value)-1] < 1000 ):
+        if (int(rating_value) < 3):
             row = [review.find('span').text.strip(), rating_value]
-            rating_counter[int(rating_value) - 1] += 1
             writer.writerow(row)
-            print(rating_counter)
+
         else:
             continue
-
-
 
 
 def number_reviews(url):
@@ -68,42 +65,27 @@ def last_page(url):
         return True
 
 
-url = "https://www.tripadvisor.com/Hotels-g187147-Paris_Ile_de_France-Hotels.html"
 
-page = requests.get(url, headers=headers)
-soup1 = soup(page.content, "html.parser")
-soup2 = soup(soup1.prettify(),'html.parser')
+url1 ="https://www.tripadvisor.com/Hotel_Review-g186338-d282814-Reviews-Abercorn_House-London_England.html"
+url2 = "https://www.tripadvisor.com/Hotel_Review-g60763-d1181739-Reviews-The_Jane_Hotel-New_York_City_New_York.html"
+url3 = "https://www.tripadvisor.com/Hotel_Review-g60763-d122005-Reviews-The_New_Yorker_A_Wyndham_Hotel-New_York_City_New_York.html"
+url4 = "https://www.tripadvisor.com/Hotel_Review-g60763-d93627-Reviews-West_Side_YMCA-New_York_City_New_York.html"
+url5 = "https://www.tripadvisor.com/Hotel_Review-g60763-d7182733-Reviews-The_Paul_Hotel_NYC-New_York_City_New_York.html"
+url6 = "https://www.tripadvisor.com/Hotel_Review-g60763-d671150-Reviews-The_Empire_Hotel-New_York_City_New_York.html"
+url7 = "https://www.tripadvisor.com/Hotel_Review-g60763-d142114-Reviews-Night_Hotel_Broadway-New_York_City_New_York.html"
 
-list_hotels = soup2.find('div', {'class':'relWrap'})
-hotels = list_hotels.findAll('div', {'class':'prw_rup prw_meta_hsx_responsive_listing ui_section listItem'})
+urls = [ url1, url2, url3, url4, url5, url6, url7]
 
+for url_origin in urls:
+    
+    url = url_origin
+    scrap_data(url)
+    cmp = 0
+    while (not last_page(url) ):
 
-
-for hotel in hotels:
-
-    if ( not full ):
-
-        link = hotel.find('a', {'class': 'property_title prominent'}, href=True)
-        if (link):
-
-            url_origin = "https://www.tripadvisor.com" + link['href']
-            url = url_origin
-            scrap_data(url)
-            cmp = 0
-            while (not last_page(url) and not full ):       
-
-                cmp += number_reviews(url)
-                url = re.sub(r'(Reviews-)', "or" + str(cmp) + "-", url_origin)
-                scrap_data(url)
-                if ( rating_counter[0] == 1000 and rating_counter[1] == 1000 and rating_counter[2] == 1000 and rating_counter[3] == 1000
-                        and rating_counter[4] == 1000 ):
-                        full = True
-
-    else:
-        break
-
-
-
+        cmp += number_reviews(url)
+        url = re.sub(r'(Reviews-)', "or" + str(cmp) + "-", url_origin)
+        scrap_data(url)
 
 
 
